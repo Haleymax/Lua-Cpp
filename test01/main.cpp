@@ -42,3 +42,6 @@ int main(int argc , char *argv[]){
     return 0;
     
 }
+
+//g++ -std=c++11 -o main main.cpp Student.cpp StudentRegFunc.cpp -I../lua-5.4.6/src -L../lua-5.4.6/src -llua -ldl
+//编译语句
