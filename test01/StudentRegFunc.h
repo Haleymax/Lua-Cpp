@@ -1,6 +1,8 @@
+
 #pragma once
 
-#include "Student.cpp"
+
+#include "Student.h"
 
 extern "C"
 {

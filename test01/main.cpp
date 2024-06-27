@@ -7,8 +7,8 @@ extern "C"
 #include "../lua-5.4.6/src/lualib.h"
 }
 
-#include "Student.cpp"
-#include "StudentRegFunc.cpp"
+#include "Student.h"
+#include "StudentRegFunc.h"
 
 static const luaL_Reg lua_reg_libs[] = {
     {"base" , luaopen_base },
@@ -38,7 +38,7 @@ int main(int argc , char *argv[]){
         std::cout << "lua_newstate error ! " << std::endl;
     }
 
-    system("pause");
+    
     return 0;
     
 }
