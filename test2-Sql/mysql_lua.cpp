@@ -55,7 +55,7 @@ int lua_mysql_select(lua_State *L){
     }else{
         int num_fields = mysql_num_fields(result);
 
-        lua_newtable(L);    //创建一个新表
+        lua_newtable(L);    //创建一个新表,这个新的表放置于栈顶
 
         MYSQL_ROW row;
         int i = 1;
@@ -66,10 +66,10 @@ int lua_mysql_select(lua_State *L){
             {
                 lua_pushstring(L , mysql_fetch_field_direct(result , j)->name);
                 lua_pushstring(L , row[j]);
-                lua_settable(L , -3);   //将字段名和键值对存入对应的表中
+                lua_settable(L , -3);   //将字段名和键值对存入对应的表中（-3表示的就是刚刚创建的表，调用这个函数后会将-1 ， -2 索引的健值放入表中并弹出栈）
             }
 
-            lua_rawseti(L , -2 , i);  
+            lua_rawseti(L , -2 , i);  //栈顶这个表表示的是一行数据，将这一行数据返回插入今栈顶下面一个的表中 i 表示第几行作为健
             i++;
             
         }
