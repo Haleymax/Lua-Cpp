@@ -21,8 +21,8 @@ int lua_mysql_connect(lua_State *L){
     }
 
     //将MySQL 连接句柄作为 Lua 用户数据压栈
-    MYSQL ** userdata = (MYSQL **)lua_newuserdata(L , sizeof(MYSQL *));
-    *userdata = conn;
+    MYSQL ** userdata = (MYSQL **)lua_newuserdata(L , sizeof(MYSQL *));   //使用lua_newuserdata创建一个lua环境中的数据变量将其指针指向userdata用于存储C中的数据结构
+    *userdata = conn;   //连接获取到的连接数据放入userdata
 
     //设置元表
     luaL_getmetatable(L, "mysql.connection");
