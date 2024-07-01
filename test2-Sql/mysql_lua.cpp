@@ -155,3 +155,28 @@ int luaopen_mysql_lib(lua_State *L) {
     luaL_newlib(L, mysql_lib);  // 创建包含所有 MySQL 相关函数的 Lua 库
     return 1;  // 返回这个库供 Lua 使用
 }
+
+
+int main() {
+    // 创建 Lua 环境
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);  // 打开标准 Lua 库
+
+    // 加载 MySQL Lua 库
+    luaopen_mysql_lib(L);
+    lua_setglobal(L, "mysql");  // 将 MySQL 库注册为全局变量 mysql
+
+    // 加载并执行 Lua 脚本
+    const char* script_filename = "test.lua";  // Lua 脚本文件名
+    int result = luaL_dofile(L, script_filename);
+
+    if (result != LUA_OK) {
+        std::cerr << "Error executing Lua script: " << lua_tostring(L, -1) << std::endl;
+        lua_pop(L, 1);  // 弹出错误信息
+    }
+
+    // 关闭 Lua 环境
+    lua_close(L);
+
+    return 0;
+}
