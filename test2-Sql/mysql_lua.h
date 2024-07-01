@@ -1,4 +1,4 @@
-
+//声明函数
 #pragma once
 
 #include <mysql/mysql.h>
