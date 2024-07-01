@@ -103,3 +103,25 @@ int lua_mysql_updata(lua_State *L){
     lua_pushstring(L , "更新成功");
     return 1;
 }
+
+//MySQL 删除数据函数
+int lua_mysql_delete(lua_State *L){
+    MYSQL *conn = *(MYSQL**)luaL_checkudata(L , 1 , "mysql.connection");
+    const char * table = lua_tostring(L , 2);
+    const char * where_clause = lua_tostring(L , 3);
+
+    std::string query = "DELETE FROM ";
+    query += table;
+    query += " WHERE ";
+    query += where_clause;
+
+    if (mysql_query(conn , query.c_str()) != 0)
+    {
+        lua_pushstring(L , mysql_error(conn));
+        lua_error(L);
+    }
+
+    lua_pushstring(L , "删除成功");
+    return 1;
+    
+}
