@@ -30,3 +30,52 @@ int lua_mysql_connect(lua_State *L){
     
     return 1; //返回一个值 ， 表示成功创建了 MySQL 连接并将其压入栈顶
 }
+
+//MySQL 查询数据函数
+int lua_mysql_select(lua_State *L){
+    MYSQL * conn = *(MYSQL**)luaL_checkudata(L , 1 ,"mysql.connection");
+    const char * table = lua_tostring(L , 2);
+    const char * columns = lua_tostring(L , 3);
+
+    std::string query = "SELECT";
+    query += columns;
+    query += " FROM ";
+    query += table;
+
+    if (mysql_query(conn , query.c_str()) != 0)
+    {
+        lua_pushstring(L , mysql_error(conn));
+        lua_error(L); 
+    }
+    
+    MYSQL_RES* result = mysql_store_result(conn);
+    if (result == NULL)
+    {
+        lua_pushnil(L);
+    }else{
+        int num_fields = mysql_num_fields(result);
+
+        lua_newtable(L);    //创建一个新表
+
+        MYSQL_ROW row;
+        int i = 1;
+        while ((row = mysql_fetch_row(result)))
+        {
+            lua_newtable(L);
+            for (size_t j = 0; j < num_fields; j++)
+            {
+                lua_pushstring(L , mysql_fetch_field_direct(result , j)->name);
+                lua_pushstring(L , row[j]);
+                lua_settable(L , -3);   //将字段名和键值对存入对应的表中
+            }
+
+            lua_rawseti(L , -2 , i);  
+            i++;
+            
+        }
+    mysql_free_result(result);    
+    }
+
+    return 1;
+    
+}
