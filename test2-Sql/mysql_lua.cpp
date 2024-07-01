@@ -79,3 +79,27 @@ int lua_mysql_select(lua_State *L){
     return 1;
     
 }
+
+//MySQL 更新数据库
+int lua_mysql_updata(lua_State *L){
+    MYSQL *conn = *(MYSQL**)luaL_checkudata(L , 1 , "mysql.connection");
+    const char * table = lua_tostring(L , 2);
+    const char * set_clause = lua_tostring(L , 3);
+    const char * where_clause = lua_tostring(L , 4);
+
+    std::string query = "UPDATE ";
+    query += table;
+    query += " SET ";
+    query += set_clause;
+    query += " WHERE ";
+    query += where_clause;
+
+    if (mysql_query(conn , query.c_str()) != 0)
+    {
+        lua_pushstring(L , mysql_error(conn));
+        lua_error(L);
+    }
+    
+    lua_pushstring(L , "更新成功");
+    return 1;
+}
