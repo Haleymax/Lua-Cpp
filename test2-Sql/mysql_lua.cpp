@@ -125,3 +125,33 @@ int lua_mysql_delete(lua_State *L){
     return 1;
     
 }
+
+//注册MySQL函数供lua使用
+static const luaL_Reg mysql_lib[] = {
+    {"connect", lua_mysql_connect},
+    {"insert", lua_mysql_insert},
+    {"select", lua_mysql_select},
+    {"update", lua_mysql_update},
+    {"delete", lua_mysql_delete},
+    {NULL, NULL}
+};
+
+
+static int mysql_connection_gc(lua_State *L) {  
+    MYSQL* conn = *(MYSQL**)luaL_checkudata(L, 1, "mysql.connection");  
+    mysql_close(conn);  
+    return 0;  
+}  
+
+// 打开 MySQL Lua 库的函数实现
+int luaopen_mysql_lib(lua_State *L) {
+    luaL_newmetatable(L, "mysql.connection");  // 创建元表用于 MySQL 连接
+
+    // 设置元表的 __gc 方法，用于在 Lua 对象被回收时关闭 MySQL 连接
+   lua_pushstring(L, "__gc");  
+    lua_pushcfunction(L, mysql_connection_gc);  
+    lua_settable(L, -3); 
+
+    luaL_newlib(L, mysql_lib);  // 创建包含所有 MySQL 相关函数的 Lua 库
+    return 1;  // 返回这个库供 Lua 使用
+}
